@@ -1,0 +1,4 @@
+rawpy>=0.17
+imageio>=2.33
+opencv-python>=4.8
+matplotlib>=3.8
