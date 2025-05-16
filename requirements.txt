@@ -3,3 +3,4 @@ imageio>=2.33
 opencv-python>=4.8
 matplotlib>=3.8
 opencv-python>=4.5
+scikit-image>=0.21.0
