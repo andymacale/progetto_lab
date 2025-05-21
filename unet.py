@@ -13,9 +13,9 @@ class DoubleConv(nn.Module):
         # Costruzione delle rete neurale
         self.block = nn.Sequential(
             # DoubleConv RGB quindi 3 canali di out_channels
-            nn.Conv2d(in_channels, out_channels = 3, padding = 1), # conv 1
+            nn.Conv2d(in_channels, out_channels = 3, kernel_size = 3 ,padding = 1), # conv 1
             nn.ReLU(inplace = True), # attivatore 1
-            nn.Conv2d(in_channels, out_channels = 3, padding = 1), # conv 2
+            nn.Conv2d(in_channels, out_channels = 3, kernel_size = 3 ,padding = 1), # conv 2
             nn.ReLU(inplace = True), # attivatore 2
         )
 
