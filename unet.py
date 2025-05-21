@@ -5,17 +5,17 @@ import torch.nn.functional as F
 # Classe che permette l'esecuzione di due convoluzioni con l'unità
 # logica rettificata (ReLu), alla base delle reti neurali UNet
 
-class Convoluzione(nn.Module):
+class DoubleConv(nn.Module):
 
     # Costruttore
-    def __init__(self, ingresso, uscita):
+    def __init__(self, in_channels, out_channels):
         super().__init__()
         # Costruzione delle rete neurale
         self.block = nn.Sequential(
-            # Convoluzione RGB quindi 3 canali di uscita
-            nn.Conv2d(ingresso, uscita = 3, padding = 1), # conv 1
+            # DoubleConv RGB quindi 3 canali di out_channels
+            nn.Conv2d(in_channels, out_channels = 3, padding = 1), # conv 1
             nn.ReLU(inplace = True), # attivatore 1
-            nn.Conv2d(ingresso, uscita = 3, padding = 1), # conv 2
+            nn.Conv2d(in_channels, out_channels = 3, padding = 1), # conv 2
             nn.ReLU(inplace = True), # attivatore 2
         )
 
@@ -28,30 +28,30 @@ class Convoluzione(nn.Module):
 class UNet(nn.Module):
 
     # Costruttore:
-    # 4 canali di ingresso (RGB + flag) e 3 di uscita (RGB)
-    def __init__(self, ingresso = 4, uscita = 3):
+    # 4 canali di in_channels (RGB + flag) e 3 di out_channels (RGB)
+    def __init__(self, in_channels = 4, out_channels = 3):
         super().__init__()
 
         # Encoder della rete neurale (discesa)
         # Definizione: due blocchi che effettuano sottocampionamento
-        self.down1 = Convoluzione(ingresso, 64)
+        self.down1 = DoubleConv(in_channels, 64)
         self.pool1 = nn.MaxPool2d(2) # dimezza la dimensione
-        self.down2 = Convoluzione(ingresso, 64)
+        self.down2 = DoubleConv(in_channels, 64)
         self.pool2 = nn.MaxPool2d(2) # dimezza la dimensione
 
         # Punto più in profondità della rete
-        self.bottleneck = Convoluzione(128, 256)
+        self.bottleneck = DoubleConv(128, 256)
 
         # Decoder della rete neurale (salita)
         # Definizione: due blocchi che effettuano
-        # sovracampionamento, concatenazione e convoluzione
+        # sovracampionamento, concatenazione e DoubleConv
         self.up2 = nn.ConvTranspose2d(256, 128, 2, stride=2) # da 64 a 128
-        self.con2 = Convoluzione(256, 128)
+        self.con2 = DoubleConv(256, 128)
         self.up2 = nn.ConvTranspose2d(128, 64, 2, stride=2) # da 64 a 128
-        self.con2 = Convoluzione(128, 64)
+        self.con2 = DoubleConv(128, 64)
 
-        # Conversione nei tre canali con una convoluzione 1x1
-        self.out = nn.Conv2d(64, uscita, kernel_size = 1)
+        # Conversione nei tre canali con una DoubleConv 1x1
+        self.out = nn.Conv2d(64, out_channels, kernel_size = 1)
 
     
     def forward(self, elem):

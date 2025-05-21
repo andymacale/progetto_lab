@@ -7,7 +7,7 @@ from PIL import Image
 import pandas as pd
 import os
 
-from rete import UNet  # Importa la rete dal file rete.py
+from unet import UNet  # Importa la rete dal file rete.py
 
 # === Dataset personalizzato che carica immagini input e target da un CSV ===
 class ImagePairDataset(Dataset):
